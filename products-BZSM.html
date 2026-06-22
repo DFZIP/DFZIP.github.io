@@ -562,6 +562,7 @@
         <div class="mode-selector">
             <div class="mode-option active" data-mode="closed" onclick="changeMode(this)" title="闭">闭</div>
             <div class="mode-option" data-mode="open" onclick="changeMode(this)" title="开">开</div>
+            <div class="mode-option" data-mode="chain" onclick="changeMode(this)" title="码">码</div>
         </div>
 
         <!-- 模块2：单/双 选择器 (次级优先级) -->
@@ -591,6 +592,14 @@
             <div class="color-option active" style="background-color: #c4bebe;" data-main-img="images/products/waterproof/water60open-gray.png" data-thumbs="images/products/waterproof/water60open-gray.png" onclick="changeColor(this)" title="灰色款">
             </div>
             <div class="color-option active" style="background-color: #333333;" data-main-img="images/products/waterproof/water60open-black.jpg" data-thumbs="images/products/waterproof/water60open-black.jpg" onclick="changeColor(this)" title="黑色款">
+            </div>
+            <!-- 示例：您可以取消注释并修改为第二个颜色-->
+        </div>
+
+        <!-- 新增模块6：颜色选择器 - 隶属于 "码" -->
+        <div class="color-selector" id="colorSelectorContainer_Chain" style="display: none;">
+            <!-- 这是“码”模式的颜色模板，请复制并修改 -->
+            <div class="color-option active" style="background-color: #333333;" data-main-img="images/products/waterproof/40mz.jpg" data-thumbs="images/products/waterproof/40mz.jpg,images/products/waterproof/60mz.jpg,images/products/waterproof/80mz.jpg" onclick="changeColor(this)" title="黑色款">
             </div>
             <!-- 示例：您可以取消注释并修改为第二个颜色-->
         </div>
@@ -842,111 +851,119 @@
     document.addEventListener('DOMContentLoaded', function() {
         const firstModeOption = document.querySelector('.mode-option.active');
         if (firstModeOption) {
-        changeMode(firstModeOption);
+            changeMode(firstModeOption);
         }
     });
-
+    
     // --- 逻辑1：处理“开/闭”切换 ---
     function changeMode(modeElement) {
         const modeOptions = document.querySelectorAll('.mode-option');
         modeOptions.forEach(option => option.classList.remove('active'));
         modeElement.classList.add('active');
-
+    
         const selectedMode = modeElement.getAttribute('data-mode');
         const typeSelector = document.getElementById('typeSelectorContainer');
         const colorSelectorSingle = document.getElementById('colorSelectorContainer_Single');
         const colorSelectorDouble = document.getElementById('colorSelectorContainer_Double');
         const colorSelectorOpen = document.getElementById('colorSelectorContainer_Open');
-
+        const colorSelectorChain = document.getElementById('colorSelectorContainer_Chain'); // 新增：获取“码”模式的颜色选择器
+    
         if (selectedMode === 'closed') {
-        // 选择“闭”，显示“单/双”选择器
-        typeSelector.style.display = 'flex';
-        colorSelectorOpen.style.display = 'none'; // 隐藏“开”的颜色选择器
-        
-        // 触发“单/双”的默认选择
-        const defaultType = typeSelector.querySelector('.type-option.active');
-        changeType(defaultType);
-        } else {
-        // 选择“开”，隐藏“单/双”选择器，显示“开”的颜色选择器
-        typeSelector.style.display = 'none';
-        colorSelectorSingle.style.display = 'none';
-        colorSelectorDouble.style.display = 'none';
-        colorSelectorOpen.style.display = 'flex';
-        
-        // 触发“开”模式下默认的颜色选择
-        const defaultOpenColor = colorSelectorOpen.querySelector('.color-option.active');
-        changeColor(defaultOpenColor);
+            // 选择“闭”，显示“单/双”选择器
+            typeSelector.style.display = 'flex';
+            colorSelectorOpen.style.display = 'none';
+            colorSelectorChain.style.display = 'none'; // 隐藏“码”的颜色选择器
+            // 触发“单/双”的默认选择
+            const defaultType = typeSelector.querySelector('.type-option.active');
+            changeType(defaultType);
+        } else if (selectedMode === 'open') {
+            // 选择“开”，隐藏“单/双”选择器，显示“开”的颜色选择器
+            typeSelector.style.display = 'none';
+            colorSelectorSingle.style.display = 'none';
+            colorSelectorDouble.style.display = 'none';
+            colorSelectorChain.style.display = 'none'; // 隐藏“码”的颜色选择器
+            colorSelectorOpen.style.display = 'flex';
+            // 触发“开”模式下默认的颜色选择
+            const defaultOpenColor = colorSelectorOpen.querySelector('.color-option.active');
+            changeColor(defaultOpenColor);
+        } else if (selectedMode === 'chain') { // 新增：处理“码”模式
+            // 选择“码”，隐藏“单/双”选择器，显示“码”的颜色选择器
+            typeSelector.style.display = 'none';
+            colorSelectorSingle.style.display = 'none';
+            colorSelectorDouble.style.display = 'none';
+            colorSelectorOpen.style.display = 'none';
+            colorSelectorChain.style.display = 'flex';
+            // 触发“码”模式下默认的颜色选择
+            const defaultChainColor = colorSelectorChain.querySelector('.color-option.active');
+            changeColor(defaultChainColor);
         }
     }
-
+    
     // --- 逻辑2：处理“单/双”切换 ---
     function changeType(typeElement) {
         const typeOptions = document.querySelectorAll('.type-option');
         typeOptions.forEach(option => option.classList.remove('active'));
         typeElement.classList.add('active');
-
+    
         const selectedType = typeElement.getAttribute('data-type');
         const colorSelectorSingle = document.getElementById('colorSelectorContainer_Single');
         const colorSelectorDouble = document.getElementById('colorSelectorContainer_Double');
-
+    
         if (selectedType === 'single') {
-        // 选择“单”，显示“单”的颜色选择器，隐藏“双”的
-        colorSelectorSingle.style.display = 'flex';
-        colorSelectorDouble.style.display = 'none';
-        
-        // 触发“单”模式下默认的颜色选择
-        const defaultSingleColor = colorSelectorSingle.querySelector('.color-option.active');
-        changeColor(defaultSingleColor);
+            // 选择“单”，显示“单”的颜色选择器，隐藏“双”的
+            colorSelectorSingle.style.display = 'flex';
+            colorSelectorDouble.style.display = 'none';
+            // 触发“单”模式下默认的颜色选择
+            const defaultSingleColor = colorSelectorSingle.querySelector('.color-option.active');
+            changeColor(defaultSingleColor);
         } else {
-        // 选择“双”，显示“双”的颜色选择器，隐藏“单”的
-        colorSelectorSingle.style.display = 'none';
-        colorSelectorDouble.style.display = 'flex';
-        
-        // 触发“双”模式下默认的颜色选择
-        const defaultDoubleColor = colorSelectorDouble.querySelector('.color-option.active');
-        changeColor(defaultDoubleColor);
+            // 选择“双”，显示“双”的颜色选择器，隐藏“单”的
+            colorSelectorSingle.style.display = 'none';
+            colorSelectorDouble.style.display = 'flex';
+            // 触发“双”模式下默认的颜色选择
+            const defaultDoubleColor = colorSelectorDouble.querySelector('.color-option.active');
+            changeColor(defaultDoubleColor);
         }
     }
-
+    
     // --- 逻辑3：处理颜色切换 (通用) ---
     function changeColor(colorElement) {
         // 找到颜色选项所在的父容器，只在该容器内移除active类
         const parentSelector = colorElement.parentElement;
         const colorOptions = parentSelector.querySelectorAll('.color-option');
-        
         colorOptions.forEach(option => option.classList.remove('active'));
         colorElement.classList.add('active');
-
+    
         const newMainImgSrc = colorElement.getAttribute('data-main-img');
         const thumbsData = colorElement.getAttribute('data-thumbs');
         updateGallery(newMainImgSrc, thumbsData);
     }
-
+    
     // --- 辅助函数：统一更新主图和缩略图 ---
     function updateGallery(mainImgSrc, thumbsData) {
         const mainImage = document.getElementById('mainImage');
         mainImage.src = mainImgSrc;
-        
         const zoomResult = document.getElementById('zoomResult');
         zoomResult.style.backgroundImage = `url('${mainImgSrc}')`;
-
         const thumbnailContainer = document.getElementById('thumbnailContainer');
         thumbnailContainer.innerHTML = '';
-        
+    
         if (thumbsData) {
-        const thumbSrcs = thumbsData.split(',');
-        thumbSrcs.forEach((src, index) => {
-            const img = document.createElement('img');
-            img.src = src.trim();
-            img.alt = "产品缩略图";
-            img.className = 'thumb';
-            if (index === 0) img.classList.add('active');
-            img.onclick = function() { changeMainImage(this); };
-            thumbnailContainer.appendChild(img);
-        });
+            const thumbSrcs = thumbsData.split(',');
+            thumbSrcs.forEach((src, index) => {
+                const img = document.createElement('img');
+                img.src = src.trim();
+                img.alt = "产品缩略图";
+                img.className = 'thumb';
+                if (index === 0) img.classList.add('active');
+                img.onclick = function() {
+                    changeMainImage(this);
+                };
+                thumbnailContainer.appendChild(img);
+            });
         }
     }
-
+    
     // --- 逻辑4：处理缩略图点击 ---
     function changeMainImage(thumb) {
         const mainImage = document.getElementById('mainImage');
@@ -957,29 +974,29 @@
         const zoomResult = document.getElementById('zoomResult');
         zoomResult.style.backgroundImage = `url('${thumb.src}')`;
     }
-
+    
     // --- 逻辑5：图片放大镜效果 (保持不变) ---
     const mainImageContainer = document.getElementById('mainImageContainer');
     const mainImage = document.getElementById('mainImage');
     const zoomLens = document.getElementById('zoomLens');
     const zoomResult = document.getElementById('zoomResult');
-
+    
     mainImageContainer.addEventListener('mouseenter', function() {
         if (window.innerWidth > 992) {
-        zoomLens.style.display = 'block';
-        zoomResult.style.display = 'block';
-        zoomResult.style.backgroundImage = `url('${mainImage.src}')`;
-        const cx = zoomResult.offsetWidth / zoomLens.offsetWidth;
-        const cy = zoomResult.offsetHeight / zoomLens.offsetHeight;
-        zoomResult.style.backgroundSize = `${mainImage.offsetWidth * cx}px ${mainImage.offsetHeight * cy}px`;
+            zoomLens.style.display = 'block';
+            zoomResult.style.display = 'block';
+            zoomResult.style.backgroundImage = `url('${mainImage.src}')`;
+            const cx = zoomResult.offsetWidth / zoomLens.offsetWidth;
+            const cy = zoomResult.offsetHeight / zoomLens.offsetHeight;
+            zoomResult.style.backgroundSize = `${mainImage.offsetWidth * cx}px ${mainImage.offsetHeight * cy}px`;
         }
     });
-
+    
     mainImageContainer.addEventListener('mouseleave', function() {
         zoomLens.style.display = 'none';
         zoomResult.style.display = 'none';
     });
-
+    
     mainImageContainer.addEventListener('mousemove', function(e) {
         if (window.innerWidth <= 992) return;
         const rect = mainImageContainer.getBoundingClientRect();
